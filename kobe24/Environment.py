@@ -1,3 +1,4 @@
+from Errors import UndefinedException
 
 class Environment:
     		
@@ -6,15 +7,15 @@ class Environment:
 		self.outer = env
 		
 	def assign(self, name, value):
-		if name in self.values:
-			self.values[name] = value
-		elif self.checkOuter(name) == True:
+		if name.text in self.values:
+			self.values[name.text] = value
+		elif self.checkOuter(name.text) == True:
 			self.outer.assign(name, value)
 		else:
-			self.values[name] = value
+			self.values[name.text] = value
 			
 	def define(self, name, value):
-		self.values[name] = value
+		self.values[name.text] = value
 			
 	def checkOuter(self, name):
 		if self.outer is not None:
@@ -26,10 +27,10 @@ class Environment:
 			return False
 		
 	def getValue(self, name):
-		if name in self.values:
-			return self.values[name]
+		if name.text in self.values:
+			return self.values[name.text]
 			
-		if self.outer is not None:
+		if self.checkOuter(name.text) == True:
 			return self.outer.getValue(name)
-		
-		raise Exception
+			
+		raise UndefinedException(name.text, name.row_b, name.col_b)

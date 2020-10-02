@@ -16,6 +16,17 @@ with open(sourcecode) as rf:
 
 codebase = codebase.replace('\t', '    ')
 
+def convertEscChar(string):
+	string = string.replace('\\t', '\t')
+	string = string.replace('\\n', '\n')
+	string = string.replace('\\f', '\f')
+	string = string.replace('\\r', '\r')
+	string = string.replace('\\b', '\b')
+	string = string.replace('\\"', '\"')
+	string = string.replace("\\'", "\'")
+	string = string.replace('\\\\', '\\')
+	return string
+
 try:	
 	scanner = Scanner()
 	tokens = scanner.scan(codebase);
@@ -36,11 +47,11 @@ try:
 	for k in kobes:
 		if k.write != None:
 			display += k.write
-		console.append(display)
+		console.append(convertEscChar(display))
 	
 		if k.variable != None:
 			vlog += k.variable + '\n'
-		varlogs.append(vlog)
+		varlogs.append(convertEscChar(vlog))
 
 	#gui	
 	window = Tk()
@@ -105,9 +116,12 @@ try:
 	rawlabel = Label(rawframe, text="Raw:", font=("Verdana", 14)).pack(side=LEFT)
 	rawtxt = Text(rawframe, wrap=NONE, font=("Consolas", 15))
 	rawtxt.config(state=DISABLED)
-	rsb = Scrollbar(rawframe, orient=HORIZONTAL, command=rawtxt.xview)
-	rawtxt['xscrollcommand'] = rsb.set
-	rsb.pack(side=BOTTOM, fill=X)
+	rhsb = Scrollbar(rawframe, orient=HORIZONTAL, command=rawtxt.xview)
+	rvsb = Scrollbar(rawframe, command=rawtxt.yview)
+	rawtxt['xscrollcommand'] = rhsb.set
+	rawtxt['yscrollcommand'] = rvsb.set
+	rvsb.pack(side=RIGHT, fill=Y)
+	rhsb.pack(side=BOTTOM, fill=X)
 	rawtxt.pack(side=LEFT, fill=BOTH)
 
 	valueframe = Frame(window)
@@ -115,9 +129,12 @@ try:
 	valuelabel = Label(valueframe, text="Value:", font=("Verdana", 14)).pack(side=LEFT)
 	valuetxt = Text(valueframe, wrap=NONE, font=("Consolas", 15))
 	valuetxt.config(state=DISABLED)
-	vsb = Scrollbar(valueframe, orient=HORIZONTAL, command=valuetxt.xview)
-	valuetxt['xscrollcommand'] = vsb.set
-	vsb.pack(side=BOTTOM, fill=X)
+	vhsb = Scrollbar(valueframe, orient=HORIZONTAL, command=valuetxt.xview)
+	vvsb = Scrollbar(valueframe, command=valuetxt.yview)
+	valuetxt['xscrollcommand'] = vhsb.set
+	valuetxt['yscrollcommand'] = vvsb.set
+	vvsb.pack(side=RIGHT, fill=Y)
+	vhsb.pack(side=BOTTOM, fill=X)
 	valuetxt.pack(side=LEFT, fill=BOTH)
 
 	logframe = Frame(window)
@@ -158,7 +175,7 @@ try:
 		rawtxt.config(state=DISABLED)
 		valuetxt.config(state=NORMAL)
 		valuetxt.delete(1.0, END)
-		valuetxt.insert(END, kobe.value)
+		valuetxt.insert(END, convertEscChar(kobe.value))
 		valuetxt.config(state=DISABLED)
 		start = str(kobe.row_b) + '.' + str(kobe.col_b - 1)
 		end = str(kobe.row_e) + '.' + str(kobe.col_e)
@@ -168,12 +185,10 @@ try:
 	window.mainloop()
 
 except Exception as e:
-	#print(str(e))
-	print("Error!!! Can't specify yet. Still working on it. hehe")
+	try:
+		print(e.getMessage())
+	except:
+		print("Unknown Error")
 	
-
-
-
-
 
 

@@ -1,6 +1,6 @@
 from TokenType import TokenType
 from Environment import Environment
-from Errors import Return, Continue, Break
+from Errors import *
 from Kobe import Kobe
 
 cur_env = Environment()
@@ -40,36 +40,46 @@ class BinaryExpr(SuperExpr):
 		left = self.left.eval()
 		right = self.right.eval()
 		value = None
-		if self.oper.type == TokenType.ADD:
-			value = left + right
-		elif self.oper.type == TokenType.SUB:
-			value = left - right
-		elif self.oper.type == TokenType.MUL:
-			value = left * right
-		elif self.oper.type == TokenType.FDIV:
-			value = left // right
-		elif self.oper.type == TokenType.DIV:
-			value = left / right
-		elif self.oper.type == TokenType.MOD:
-			value = left % right
-		elif self.oper.type == TokenType.POW:
-			value = left ** right
-		elif self.oper.type == TokenType.EQ:
-			value = left == right
-		elif self.oper.type == TokenType.NEQ:
-			value = left != right
-		elif self.oper.type == TokenType.GT:
-			value = left > right
-		elif self.oper.type == TokenType.LT:
-			value = left < right
-		elif self.oper.type == TokenType.GTE:
-			value = left >= right
-		elif self.oper.type == TokenType.LTE:
-			value = left <= right
-		elif self.oper.type == TokenType.OR:
-			value = left or right
-		elif self.oper.type == TokenType.AND:
-			value = left and right
+		try:
+			if self.oper.type == TokenType.ADD:
+				if isinstance(left, str) or isinstance(right, str):
+					value = str(left) + str(right)
+				else:
+					value = left + right
+			elif self.oper.type == TokenType.SUB:
+				value = left - right
+			elif self.oper.type == TokenType.MUL:
+				value = left * right
+			elif self.oper.type == TokenType.FDIV:
+				if right == 0:
+					raise IllegalDivisionException(self.row_b, self.col_b)
+				value = left // right
+			elif self.oper.type == TokenType.DIV:
+				if right == 0:
+					raise IllegalDivisionException(self.row_b, self.col_b)
+				value = left / right
+			elif self.oper.type == TokenType.MOD:
+				value = left % right
+			elif self.oper.type == TokenType.POW:
+				value = left ** right
+			elif self.oper.type == TokenType.EQ:
+				value = left == right
+			elif self.oper.type == TokenType.NEQ:
+				value = left != right
+			elif self.oper.type == TokenType.GT:
+				value = left > right
+			elif self.oper.type == TokenType.LT:
+				value = left < right
+			elif self.oper.type == TokenType.GTE:
+				value = left >= right
+			elif self.oper.type == TokenType.LTE:
+				value = left <= right
+			elif self.oper.type == TokenType.OR:
+				value = left or right
+			elif self.oper.type == TokenType.AND:
+				value = left and right
+		except:
+			raise InvalidOperationException(self.oper.text, self.oper.row_b, self.oper.col_b)
 			
 		return value
 		
@@ -103,7 +113,7 @@ class MethodCall(SuperExpr):
 		self.args = args
 	
 	def eval(self):
-		text = self.name
+		text = self.name.text
 		argtext = []
 		argvs = []
 		for arg in self.args:
@@ -170,7 +180,7 @@ class ReturnStmt(SuperExpr):
 		value = self.expr.eval()
 		
 		kobes.append(Kobe(self.text, str(value), self.row_b, self.row_e, self.col_b, self.col_e))
-		raise Return(value)
+		raise Return(self.row_b, self.col_b, value)
 		
 class PrintStmt(SuperExpr):
 	def __init__(self, expr):
@@ -203,7 +213,10 @@ class GetExpr(SuperExpr):
 		if len(self.indeces) > 0:
 			for index in self.indeces:
 				idx = index.eval()
-				value = value[idx]
+				try:
+					value = value[idx]
+				except:
+					raise InvalidIndexException(idx, index.row_b, index.col_b)
 
 		return value
 				
@@ -212,7 +225,7 @@ class AssignStmt(SuperExpr):
 		self.name = name
 		self.expr = expr
 		self.indeces = indeces
-		self.vname = name
+		self.vname = name.text
 		
 	def eval(self):
 		self.value = self.expr.eval()
@@ -235,9 +248,12 @@ class AssignStmt(SuperExpr):
 			if not(idx in struct):
 				struct[idx] = self.set(i + 1, n, None)
 			else:
-				raise Exception
-		else:		
-			struct[idx] = self.set(i + 1, n, struct[idx])
+				raise InvalidIndexException(idx, self.indeces[i].row_b, self.indeces[i].col_b)
+		else:
+			try:
+				struct[idx] = self.set(i + 1, n, struct[idx])
+			except:
+				raise InvalidIndexException(idx, self.indeces[i].row_b, self.indeces[i].col_b)
 		return struct
 			
 class BlockStmt:
@@ -260,7 +276,7 @@ class BreakStmt(SuperExpr):
 		
 	def eval(self):
 		kobes.append(Kobe(self.text, str(self.value), self.row_b, self.row_e, self.col_b, self.col_e))
-		raise Break
+		raise Break(self.row_b, self.col_b)
 		
 class ContinueStmt(SuperExpr):
 	def __init__(self):
@@ -268,7 +284,7 @@ class ContinueStmt(SuperExpr):
 		
 	def eval(self):
 		kobes.append(Kobe(self.text, str(self.value), self.row_b, self.row_e, self.col_b, self.col_e))
-		raise Continue
+		raise Continue(self.row_b, self.col_b)
 		
 class IfStmt:
 	def __init__(self, cond, then, elsbr):
@@ -315,16 +331,16 @@ class FunctionCall(SuperExpr):
 		self.args = args
 		
 	def eval(self):
-		funcName = self.name
+		funcName = self.name.text
 		funcArgs = []
 		funcArgsStr = []
 		for arg in self.args:
 			argv = arg.eval()
 			funcArgs.append(argv)
 			funcArgsStr.append(str(argv))
-		func = cur_env.getValue(funcName)
+		func = cur_env.getValue(self.name)
 		kobes.append(Kobe(self.text, funcName + "(" + ','.join(funcArgsStr) + ")", self.row_b, self.row_e, self.col_b, self.col_e))
-		return func.call(funcArgs)
+		return func.call(funcArgs, self.name)
 			
 class FunctionStmt:
 	def __init__(self, name, params, body):
@@ -338,9 +354,9 @@ class FunctionStmt:
 class Function:
 	def __init__(self, params, body):
 		self.params = params
-		self.body = body
+		self.body = body 
 		
-	def call(self, args):
+	def call(self, args, name):
 		global cur_env
 		fun_env = Environment(cur_env)
 		plen = len(self.params)
@@ -351,7 +367,7 @@ class Function:
 			fi = 0
 			while fi < plen:
 				param = self.params[fi]
-				cur_env.define(param.text, args[fi])
+				cur_env.define(param, args[fi])
 				strval = str(args[fi])
 				kobes.append(Kobe(param.text, strval, param.row_b, param.row_e, param.col_b, param.col_e, None, param.text + " = " + strval))
 				fi += 1
@@ -364,107 +380,107 @@ class Function:
 						
 			cur_env = tmp
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(name.text, name.row_b, name.col_b, plen)
 
 class List(list):
 	methods = ["push", "pop", "insert", "size", "clear"]
 	
 	def call(self, method, args):
-		if method in self.methods:
-			if method == "push":
-				return self.push(args)
-			if method == "pop":
-				return self._pop(args)
-			if method == "insert":
-				return self._insert(args)
-			if method == "clear":
-				return self._clear(args)
-			if method == "size":
-				return self.size(args)
+		if method.text in self.methods:
+			if method.text == "push":
+				return self.push(args, method)
+			if method.text == "pop":
+				return self._pop(args, method)
+			if method.text == "insert":
+				return self._insert(args, method)
+			if method.text == "clear":
+				return self._clear(args, method)
+			if method.text == "size":
+				return self.size(args, method)
 		else:
-			raise Exception
+			raise UndefinedMethodException(method.text, method.row_b, method.col_b)
 				
-	def push(self, args):
+	def push(self, args, method):
 		if len(args) == 1:
 			self.append(args[0])
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 1)
 			
-	def _pop(self, args):
+	def _pop(self, args, method):
 		if len(args) == 0:
 			self.pop()
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 			
-	def _insert(self, args):
+	def _insert(self, args, method):
 		if len(args) == 2:
 			self.insert(args[0], args[1])
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 2)
 			
-	def size(self, args):
+	def size(self, args, method):
 		if len(args) == 0:
 			return len(self)
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 			
-	def _clear(self, args):
+	def _clear(self, args, method):
 		if len(args) == 0:
 			self.clear()
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 	
 class Map(dict):
 	methods = ["remove", "clear", "keys", "values", "size"]
 	
 	def call(self, method, args):
-		if method in self.methods:
-			if method == "remove":
-				return self.remove(args)
-			if method == "clear":
-				return self._clear(args)
-			if method == "keys":
-				return self._keys(args)
-			if method == "values":
-				return self._values(args)
-			if method == "size":
-				return self.size(args)
+		if method.text in self.methods:
+			if method.text == "remove":
+				return self.remove(args, method)
+			if method.text == "clear":
+				return self._clear(args, method)
+			if method.text == "keys":
+				return self._keys(args, method)
+			if method.text == "values":
+				return self._values(args, method)
+			if method.text == "size":
+				return self.size(args, method)
 		else:
-			raise Exception
+			raise UndefinedMethodException(method.text, method.row_b, method.col_b)
 			
-	def remove(self, args):
+	def remove(self, args, method):
 		if len(args) == 1:
 			self.pop(args[0])
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 1)
 			
-	def _clear(self, args):
+	def _clear(self, args, method):
 		if len(args) == 0:
 			self.clear()
 			return self
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 
-	def size(self, args):
+	def size(self, args, method):
 		if len(args) == 0:
 			return len(self)
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 			
-	def _keys(self, args):
+	def _keys(self, args, method):
 		if len(args) == 0:
 			return self.keys()
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 			
-	def _values(self, args):
+	def _values(self, args, method):
 		if len(args) == 0:
 			return self.values()
 		else:
-			raise Exception
+			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 	

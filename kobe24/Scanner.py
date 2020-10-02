@@ -105,7 +105,7 @@ class Scanner:
 				self.i += 1
 				self.col += 1
 			else:
-				raise UnexpectedCharacterError
+				raise UnexpectedCharacterError(self.codebase[self.i], self.row, self.col)
 		
 		self.addToken(TokenType.EOF, '~') 
 		return self.tokens
@@ -137,10 +137,11 @@ class Scanner:
 			
 
 		if cur_i == self.code_len:
-			raise UnterminatedStringError
+			raise UnterminatedStringError(row, col)
 		else:
 			text = self.codebase[self.i:cur_i + 1]
 			literal = self.codebase[self.i + 1:cur_i]
+			literal = literal.replace('\\n', '\n')
 			self.col += 1
 			self.tokens.append(Token(TokenType.STR, text, literal, row, self.row, col, self.col))
 			self.col += 1

@@ -15,5 +15,6 @@ class Kobe:
 		return self.value
 		
 	def __str__(self):
+		#for debugging
 		return self.text + ' >> ' + str(self.value) + ' loc: ' + str(self.row_b) + ',' + str(self.row_e) + ',' + str(self.col_b) + ',' + str(self.col_e)  
 		

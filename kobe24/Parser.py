@@ -25,7 +25,7 @@ class Parser:
 		if self.current().type == tok:
 			return self.advance()
 		
-		raise ExpectedTokenError;
+		raise UnexpectedTokenError(self.current().text, self.current().row_b, self.current().col_b) 
 
 	def advance(self):
 		if self.current().type != TokenType.EOF:
@@ -242,7 +242,7 @@ class Parser:
 				
 	def funArgs(self, name, row_b, col_b):
 		args = []
-		argTxt = name + "("
+		argTxt = name.text + "("
 		if self.current().type != TokenType.RPAR:
 			arg = self.expression()
 			argTxt += arg.text
@@ -258,7 +258,7 @@ class Parser:
 		return ret
 		
 	def funDef(self):
-		name = self.expect(TokenType.VAR).text
+		name = self.expect(TokenType.VAR)
 		params = []
 		body = []
 		self.expect(TokenType.LPAR)
@@ -327,8 +327,8 @@ class Parser:
 	
 	def methodCall(self):
 		text = "."
-		fname = self.expect(TokenType.VAR).text
-		text += fname
+		fname = self.expect(TokenType.VAR)
+		text += fname.text
 		self.expect(TokenType.LPAR)
 		text += "("
 		args = []
@@ -368,30 +368,30 @@ class Parser:
 
 				if self.match([TokenType.ASGN]):
 					right = self.expression()
-					ret = AssignStmt(name.text, right, indeces)
+					ret = AssignStmt(name, right, indeces)
 					ret.setKobe(right.row_b, right.row_e, right.col_b, right.col_e, right.text)
 					return ret
 				elif self.match([TokenType.DOT]):
 					meta = self.methodCall()
-					ret = MethodCall(name.text, indeces, meta["fname"], meta["args"])
+					ret = MethodCall(name, indeces, meta["fname"], meta["args"])
 					ret.setKobe(name.row_b, meta["end"].row_e, name.col_b, meta["end"].col_e, text+meta["text"])
 					return ret
 					 	
-				ret = GetExpr(name.text, indeces)
+				ret = GetExpr(name, indeces)
 				ret.setKobe(name.row_b, end.row_e, name.col_b, end.col_e, text)
 				return ret
 			elif self.match([TokenType.DOT]):
 				meta = self.methodCall()
-				ret = MethodCall(name.text, [], meta["fname"], meta["args"])
+				ret = MethodCall(name, [], meta["fname"], meta["args"])
 				ret.setKobe(name.row_b, meta["end"].row_e, name.col_b, meta["end"].col_e, name.text+meta["text"])
 				return ret
 			elif self.match([TokenType.ASGN]):
 				right = self.expression()
-				ret = AssignStmt(name.text, right, [])
+				ret = AssignStmt(name, right, [])
 				ret.setKobe(right.row_b, right.row_e, right.col_b, right.col_e, right.text)
 				return ret			
 			else:
-				ret = GetExpr(name.text, [])
+				ret = GetExpr(name, [])
 				ret.setKobe(name.row_b, name.row_e, name.col_b, name.col_e, name.text)
 				return ret	
 		elif self.match([TokenType.LPAR]):
@@ -411,5 +411,5 @@ class Parser:
 			ret.setKobe(prev.row_b, prev.row_e, prev.col_b, prev.col_e, prev.text)
 			return ret
 		else:
-			raise Exception
+			raise UnexpectedTokenError(self.current().text, self.current().row_b, self.current().col_b)
 	
