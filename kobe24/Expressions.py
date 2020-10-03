@@ -245,7 +245,9 @@ class AssignStmt(SuperExpr):
 		idx = self.indeces[i].eval()
 		self.vname += '[' + str(idx) + ']'
 		if isinstance(struct, Map):
-			if not(idx in struct):
+			if idx in struct:
+				struct[idx] = self.set(i + 1, n, struct[idx])
+			elif not(idx in struct):
 				struct[idx] = self.set(i + 1, n, None)
 			else:
 				raise InvalidIndexException(idx, self.indeces[i].row_b, self.indeces[i].col_b)
@@ -474,13 +476,13 @@ class Map(dict):
 			
 	def _keys(self, args, method):
 		if len(args) == 0:
-			return self.keys()
+			return List(self.keys())
 		else:
 			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 			
 	def _values(self, args, method):
 		if len(args) == 0:
-			return self.values()
+			return List(self.values())
 		else:
 			raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, 0)
 	
