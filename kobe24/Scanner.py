@@ -39,8 +39,6 @@ class Scanner:
 				self.processAlpha()
 			elif ch.isnumeric():
 				self.processNumber()
-			elif ch == ';':
-				self.addToken(TokenType.SCOL, ch)
 			elif ch == ':':
 				self.addToken(TokenType.COL, ch)
 			elif ch == '.':

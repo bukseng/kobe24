@@ -1,5 +1,5 @@
 write("hello")
-writeln("\t")
+write("\t")
 writeln("world")
 
 

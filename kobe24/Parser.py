@@ -121,6 +121,8 @@ class Parser:
 	def printStmt(self):
 		prev = self.previous()
 		self.expect(TokenType.LPAR);
+		if self.current().type == TokenType.RPAR:
+			raise ArgumentNotMatchException(prev.text, prev.row_b, prev.col_b, 1)
 		expr = self.expression()
 		self.expect(TokenType.RPAR);
 		row_b = expr.row_b

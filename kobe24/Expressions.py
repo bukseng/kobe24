@@ -91,10 +91,13 @@ class UnaryExpr(SuperExpr):
 	def eval(self):
 		value = None
 		right = self.right.eval()
-		if self.oper.type == TokenType.SUB:
-			value = -right
-		elif self.oper.type == TokenType.NEG:
-			value = not right	
+		try:
+			if self.oper.type == TokenType.SUB:
+				value = -right
+			elif self.oper.type == TokenType.NEG:
+				value = not right	
+		except:
+			raise InvalidOperationException(self.oper.text, self.oper.row_b, self.oper.col_b)
 			
 		return value
 	
