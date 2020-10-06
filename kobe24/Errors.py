@@ -1,58 +1,61 @@
+class SuperException(Exception):
+	def getLocation(self):
+		return " at line " + str(self.line) + ", column " + str(self.col)
 
-class UnexpectedCharacterError(Exception):
+class UnexpectedCharacterError(SuperException):
 	def __init__(self, char, line, col):
 		self.line = line
 		self.col = col
 		self.char = char	
 		
 	def getMessage(self):
-		return "Unexpected character '" + self.char + "' at line " + str(self.line) + ", column " + str(self.col)
+		return "Unexpected character '" + self.char + "'" + self.getLocation()
 	
-class UnterminatedStringError(Exception):
+class UnterminatedStringError(SuperException):
 	def __init__(self, line, col):
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Unterminated string starting at line " + str(self.line) + ", column " + str(self.col)
+		return "Unterminated string starting" + self.getLocation()
 	
-class UnexpectedTokenError(Exception):
+class UnexpectedTokenError(SuperException):
 	def __init__(self, text, line, col):
 		self.text = text
 		self.line = line
 		self.col = col
 	
 	def getMessage(self):
-		return "Unexpected token '" + self.text + "' at line " + str(self.line) + ", column " + str(self.col)
+		return "Unexpected token '" + self.text + "'" + self.getLocation()
 	
-class UndefinedException(Exception):
+class UndefinedException(SuperException):
 	def __init__(self, name, line, col):
 		self.name = name
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Undefined '" + self.name + "' at line " +str(self.line) + ", column " + str(self.col)
+		return "Undefined '" + self.name + "'" + self.getLocation()
 	
-class InvalidIndexException(Exception):
+class InvalidIndexException(SuperException):
 	def __init__(self, index, line, col):
 		self.index = index
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Invalid index '" + str(self.index) + "' at line " + str(self.line) + ", column " + str(self.col)
+		return "Invalid index '" + str(self.index) + "'" + self.getLocation()
 		
-class UndefinedMethodException(Exception):
+class UndefinedMethodException(SuperException):
 	def __init__(self, name, line, col):
 		self.name = name
 		self.line = line
 		self.col = col
 	
 	def getMessage(self):
-		return "Undefined method '" + self.name + "' at line " + str(self.line) + ", column " + str(self.col)
+		return "Undefined method '" + self.name + "'" + self.getLocation()
 
-class ArgumentNotMatchException(Exception):
+class ArgumentNotMatchException(SuperException):
 	def __init__(self, name, line, col, exp):
 		self.name = name
 		self.line = line
@@ -60,26 +63,26 @@ class ArgumentNotMatchException(Exception):
 		self.exp = exp
 		
 	def getMessage(self):
-		return "Method/Function '" + self.name + "' at line " + str(self.line) + ", column " + str(self.col) + " expects " + str(self.exp) + " argument(s)"
+		return "Method/Function '" + self.name + "'" + self.getLocation() + " expects " + str(self.exp) + " argument(s)"
 	
-class IllegalDivisionException(Exception):
+class IllegalDivisionException(SuperException):
 	def __init__(self, line, col):
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Illegal division by zero at line " + str(self.line) + ", column " + str(self.col)
+		return "Illegal division by zero" + self.getLocation()
 
-class InvalidOperationException(Exception):
+class InvalidOperationException(SuperException):
 	def __init__(self, text, line, col):
 		self.text = text
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Invalid operation '" + self.text + "' at line " + str(self.line) + ", column " + str(self.col)
+		return "Invalid operation '" + self.text + "'" + self.getLocation()
 
-class Return(Exception):
+class Return(SuperException):
 	def __init__(self, line, col, value):
 		self.line = line
 		self.col = col
@@ -89,20 +92,27 @@ class Return(Exception):
 		return self.value
 		
 	def getMessage(self):
-		return "Invalid command 'return' at line " + str(self.line) + ", column " + str(self.col) 
+		return "Invalid command 'return'" + self.getLocation()
 		
-class Continue(Exception):
+class Continue(SuperException):
 	def __init__(self, line, col):
 		self.line = line
 		self.col = col
 	
 	def getMessage(self):
-		return "Invalid command 'next' at line " + str(self.line) + ", column " + str(self.col) 
+		return "Invalid command 'next'" + self.getLocation()
 		
-class Break(Exception):
+class Break(SuperException):
 	def __init__(self, line, col):
 		self.line = line
 		self.col = col
 		
 	def getMessage(self):
-		return "Invalid command 'break' at line " + str(self.line) + ", column " + str(self.col) 
+		return "Invalid command 'break'" + self.getLocation() 
+		
+class ExpectedArgCount(Exception):
+	def __init__(self, expc):
+		self.expc = expc
+		
+	def getExpCount(self):
+		return self.expc
