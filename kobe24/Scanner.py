@@ -177,7 +177,7 @@ class Scanner:
 		if text == "true":
 			self.addToken(cur_type, text, True)
 		elif text == "false":
-			self.addtoken(cur_type, text, False)
+			self.addToken(cur_type, text, False)
 		else:
 			self.addToken(cur_type, text)
 		
