@@ -123,9 +123,22 @@ try:
 	rvsb.pack(side=RIGHT, fill=Y)
 	rhsb.pack(side=BOTTOM, fill=X)
 	rawtxt.pack(side=LEFT, fill=BOTH)
+	
+	transframe = Frame(window)
+	transframe.place(x=w_width/2 + (w_unit * 2), y=h_unit * 12, anchor="nw", width=w_width/2 - (w_unit * 5), height=h_unit * 2) 
+	translabel = Label(transframe, text="Eval:", font=("Verdana", 14)).pack(side=LEFT)
+	transtxt = Text(transframe, wrap=NONE, font=("Consolas", 15))
+	transtxt.config(state=DISABLED)
+	thsb = Scrollbar(transframe, orient=HORIZONTAL, command=transtxt.xview)
+	tvsb = Scrollbar(transframe, command=transtxt.yview)
+	transtxt['xscrollcommand'] = thsb.set
+	transtxt['yscrollcommand'] = tvsb.set
+	tvsb.pack(side=RIGHT, fill=Y)
+	thsb.pack(side=BOTTOM, fill=X)
+	transtxt.pack(side=LEFT, fill=BOTH)	
 
 	valueframe = Frame(window)
-	valueframe.place(x=w_width/2 + (w_unit * 2), y=h_unit * 12, anchor="nw", width=w_width/2 - (w_unit * 5), height=h_unit * 2) 
+	valueframe.place(x=w_width/2 + (w_unit * 2), y=h_unit * 15, anchor="nw", width=w_width/2 - (w_unit * 5), height=h_unit * 2) 
 	valuelabel = Label(valueframe, text="Value:", font=("Verdana", 14)).pack(side=LEFT)
 	valuetxt = Text(valueframe, wrap=NONE, font=("Consolas", 15))
 	valuetxt.config(state=DISABLED)
@@ -138,7 +151,7 @@ try:
 	valuetxt.pack(side=LEFT, fill=BOTH)
 
 	logframe = Frame(window)
-	logframe.place(x=w_width/2 + (w_unit * 2), y=h_unit * 14, anchor="nw", width=w_width/2 - (w_unit * 5), height=h_unit * 16)
+	logframe.place(x=w_width/2 + (w_unit * 2), y=h_unit * 17, anchor="nw", width=w_width/2 - (w_unit * 5), height=h_unit * 13)
 	loglbl = Label(logframe, text="Variable Logs:", font=("Verdana", 15)).pack()
 	logtxt = Text(logframe, wrap=NONE, font=("Consolas", 15))
 	logtxt.config(state=DISABLED)
@@ -175,6 +188,10 @@ try:
 		rawtxt.delete(1.0, END)
 		rawtxt.insert(END, kobe.text)
 		rawtxt.config(state=DISABLED)
+		transtxt.config(state=NORMAL)
+		transtxt.delete(1.0, END)
+		transtxt.insert(END, kobe.trans)
+		transtxt.config(state=DISABLED)
 		valuetxt.config(state=NORMAL)
 		valuetxt.delete(1.0, END)
 		valuetxt.insert(END, convertEscChar(kobe.value))
@@ -190,6 +207,7 @@ except Exception as e:
 	try:
 		print(e.getMessage())
 	except:
+		print(e)
 		print("Unknown Error")
 	
 
