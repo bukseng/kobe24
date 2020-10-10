@@ -1,6 +1,6 @@
 from Token import Token
 from TokenType import TokenType
-from Errors import *
+from Errors import UnexpectedCharacterError, UnterminatedStringError
 
 class Scanner:	
 	keywords = {

@@ -6,6 +6,9 @@ class Environment:
 		self.values = {}
 		self.outer = env
 		
+	def loadFunction(self, name, value):
+		self.values[name] = value
+		
 	def assign(self, name, value):
 		if name.text in self.values:
 			self.values[name.text] = value
@@ -34,3 +37,4 @@ class Environment:
 			return self.outer.getValue(name)
 			
 		raise UndefinedException(name.text, name.row_b, name.col_b)
+		

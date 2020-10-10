@@ -1,6 +1,6 @@
 from TokenType import TokenType
 from Expressions import *
-from Errors import *
+from Errors import UnexpectedTokenError, ArgumentNotMatchException
 
 class Parser:
 
