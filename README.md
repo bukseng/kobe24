@@ -22,6 +22,6 @@ code file's extension can be anything as long as it's readable on a typical code
 * handling user input
 * improve gui design and features
 * set data structure
-* type casting for converting string to numerical type and vice-versa
+* type casting
 * some refactoring
 * tests
