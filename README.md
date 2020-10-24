@@ -14,7 +14,7 @@ code file's extension can be anything as long as it's readable on a typical code
 * dynamically typed
 * does not support exception handling, multi-threading and graphics
 * slow (yeah, an interpreter made with python)
-* support list and map
+* support list and map data structure
 
 # Todo
 * for loop
