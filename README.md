@@ -11,7 +11,7 @@ code file's extension can be anything as long as it's readable on a typical code
 
 # Description
 * procedural and interpreted language
-* dynamically typed and does not have type checking
+* dynamically typed
 * does not support exception handling, multi-threading and graphics
 * slow (yeah, an interpreter made with python)
 * support list and map
