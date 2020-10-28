@@ -49,3 +49,9 @@ class TokenType(enum.Enum):
 	LBRC = 45
 	RBRC = 46
 	NULL = 47
+	BAND = 48
+	BOR = 49
+	BXOR = 50
+	BOC = 51
+	BSL = 52
+	BSR = 53

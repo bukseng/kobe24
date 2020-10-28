@@ -1,23 +1,33 @@
-from Errors import ExpectedArgCount, ArgumentNotMatchException, UndefinedMethodException
+from Errors import ExpectedArgCount, ArgumentNotMatchException, UndefinedMethodException, InvalidArgumentException, InvalidArgument
 
 class List(list):
-	methods = ["push", "pop", "insert", "size", "clear"]
+	methods = ["push", "pop", "insert", "size", "clear", "sort", "rsort", "sortby", "rsortby"]
 	
 	def call(self, method, args):
 		if method.text in self.methods:
 			try:
 				if method.text == "push":
-					return self.push(args)
+					return self.push(args).copy()
 				if method.text == "pop":
-					return self._pop(args)
+					return self._pop(args).copy()
 				if method.text == "insert":
-					return self._insert(args)
+					return self._insert(args).copy()
 				if method.text == "clear":
-					return self._clear(args)
+					return self._clear(args).copy()
 				if method.text == "size":
 					return self.size(args)
+				if method.text == "sort":
+					return self._sort(args).copy()
+				if method.text == "rsort":
+					return self.rsort(args).copy()
+				if method.text == "sortby":
+					return self.sortby(args)
+				if method.text == "rsortby":
+					return self.rsortby(args)
 			except ExpectedArgCount as expc:
 				raise ArgumentNotMatchException(method.text, method.row_b, method.col_b, expc.getExpCount())
+			except InvalidArgument:
+				raise InvalidArgumentException(method.text, method.row_b, method.col_b)
 		else:
 			raise UndefinedMethodException(method.text, method.row_b, method.col_b)
 				
@@ -54,6 +64,38 @@ class List(list):
 			return self
 		else:
 			raise ExpectedArgCount(0)
+
+	def _sort(self, args):
+		if len(args) == 0:
+			self.sort()
+			return self
+		else:
+			raise ExpectedArgCount(0)
+
+	def rsort(self, args):
+		if len(args) == 0:
+			self.sort(reverse=1)
+			return self
+		else:
+			raise ExpectedArgCount(0)
+			
+	def sortby(self, args):
+		if len(args) == 1:
+			try:
+				return sorted(self, key=lambda x:x[args[0]])
+			except:
+				raise InvalidArgument()
+		else:
+			raise ExpectedArgCount(1)
+	
+	def rsortby(self, args):
+		if len(args) == 1:
+			try:
+				return sorted(self, key=lambda x:x[args[0]], reverse=1)
+			except:
+				raise InvalidArgument()
+		else:
+			raise ExpectedArgCount(1)
 	
 class Map(dict):
 	methods = ["remove", "clear", "keys", "values", "size", "contains"]
@@ -62,13 +104,13 @@ class Map(dict):
 		if method.text in self.methods:
 			try:
 				if method.text == "remove":
-					return self.remove(args)
+					return self.remove(args).copy()
 				if method.text == "clear":
-					return self._clear(args)
+					return self._clear(args).copy()
 				if method.text == "keys":
-					return self._keys(args)
+					return self._keys(args).copy()
 				if method.text == "values":
-					return self._values(args)
+					return self._values(args).copy()
 				if method.text == "size":
 					return self.size(args)
 				if method.text == "contains":

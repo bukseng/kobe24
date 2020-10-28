@@ -83,6 +83,16 @@ class BinaryExpr(SuperExpr):
 				value = left[0] or right[0]
 			elif self.oper.type == TokenType.AND:
 				value = left[0] and right[0]
+			elif self.oper.type == TokenType.BAND:
+				value = left[0] & right[0]
+			elif self.oper.type == TokenType.BOR:
+				value = left[0] | right[0]
+			elif self.oper.type == TokenType.BXOR:
+				value = left[0] ^ right[0]
+			elif self.oper.type == TokenType.BSL:
+				value = left[0] << right[0]
+			elif self.oper.type == TokenType.BSR:
+				value = left[0] >> right[0]
 		except:
 			raise InvalidOperationException(self.oper.text, self.oper.row_b, self.oper.col_b)
 			
@@ -100,7 +110,9 @@ class UnaryExpr(SuperExpr):
 			if self.oper.type == TokenType.SUB:
 				value = -right[0]
 			elif self.oper.type == TokenType.NEG:
-				value = not right[0]	
+				value = not right[0]
+			elif self.oper.type == TokenType.BOC:
+				value = ~right[0]
 		except:
 			raise InvalidOperationException(self.oper.text, self.oper.row_b, self.oper.col_b)
 			

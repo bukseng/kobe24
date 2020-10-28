@@ -84,13 +84,25 @@ class Scanner:
 			elif ch == '<':
 				if nxt == '=':
 					self.addToken(TokenType.LTE, ch + nxt)
+				elif nxt == '<':
+					self.addToken(TokenType.BSL, ch + nxt)
 				else:
 					self.addToken(TokenType.LT, ch)
 			elif ch == '>':
 				if nxt == '=':
 					self.addToken(TokenType.GTE, ch + nxt)
+				elif nxt == '>':
+					self.addToken(TokenType.BSR, ch + nxt)
 				else:
 					self.addToken(TokenType.GT, ch)
+			elif ch == '&':
+				self.addToken(TokenType.BAND, ch)
+			elif ch == '|':
+				self.addToken(TokenType.BOR, ch)
+			elif ch == '^':
+				self.addToken(TokenType.BXOR, ch)
+			elif ch == '~':
+				self.addToken(TokenType.BOC, ch)
 			elif ch == '"':
 				self.processString()
 			elif ch == ',':
@@ -105,7 +117,7 @@ class Scanner:
 			else:
 				raise UnexpectedCharacterError(self.codebase[self.i], self.row, self.col)
 		
-		self.addToken(TokenType.EOF, '~') 
+		self.addToken(TokenType.EOF, '$') 
 		return self.tokens
 		
 	def peekNext(self):

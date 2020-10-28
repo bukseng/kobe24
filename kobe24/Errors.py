@@ -65,6 +65,15 @@ class ArgumentNotMatchException(SuperException):
 	def getMessage(self):
 		return "Method/Function '" + self.name + "'" + self.getLocation() + " expects " + str(self.exp) + " argument(s)"
 	
+class InvalidArgumentException(SuperException):
+	def __init__(self, name, line, col):
+		self.name = name
+		self.line = line
+		self.col = col
+		
+	def getMessage(self):
+		return "Invalid argument/s for method '" + self.name + "'" + self.getLocation()
+		
 class IllegalDivisionException(SuperException):
 	def __init__(self, line, col):
 		self.line = line
@@ -116,3 +125,6 @@ class ExpectedArgCount(Exception):
 		
 	def getExpCount(self):
 		return self.expc
+
+class InvalidArgument(Exception):
+	pass

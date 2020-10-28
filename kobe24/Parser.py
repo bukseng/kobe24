@@ -154,7 +154,7 @@ class Parser:
 		return expr
 	
 	def andLogic(self):
-		expr = self.equality()
+		expr = self.notLogic()
 		
 		while self.match([TokenType.AND]):
 			oper = self.previous()
@@ -163,8 +163,17 @@ class Parser:
 			expr = BinaryExpr(left, oper, right)
 			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
 			
-		return expr
+		return expr	
 		
+	def notLogic(self):
+		if self.match([TokenType.NEG]):
+			oper = self.previous()
+			right = self.unary()
+			ret = UnaryExpr(oper, right)
+			ret.setKobe(oper.row_b, right.row_e, oper.col_b, right.col_e, oper.text + right.text);
+			return ret;
+		return self.equality()
+			
 	def equality(self):
 		expr = self.comparison()
 		while self.match([TokenType.EQ, TokenType.NEQ]):
@@ -177,7 +186,7 @@ class Parser:
 		return expr
 		
 	def comparison(self):
-		expr = self.addsub()
+		expr = self.bitOr()
 		
 		while self.match([TokenType.GT, TokenType.GTE, TokenType.LT, TokenType.LTE]):
 			oper = self.previous()
@@ -187,7 +196,55 @@ class Parser:
 			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
 			
 		return expr
+	
+	def bitOr(self):
+		expr = self.bitXor()
 		
+		while self.match([TokenType.BOR]):
+			oper = self.previous()
+			right = self.equality()
+			left = expr
+			expr = BinaryExpr(left, oper, right)
+			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
+			
+		return expr
+
+	def bitXor(self):
+		expr = self.bitAnd()
+		
+		while self.match([TokenType.BXOR]):
+			oper = self.previous()
+			right = self.equality()
+			left = expr
+			expr = BinaryExpr(left, oper, right)
+			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
+			
+		return expr
+
+	def bitAnd(self):
+		expr = self.bitShift()
+		
+		while self.match([TokenType.BAND]):
+			oper = self.previous()
+			right = self.equality()
+			left = expr
+			expr = BinaryExpr(left, oper, right)
+			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
+			
+		return expr
+
+	def bitShift(self):
+		expr = self.addsub()
+		
+		while self.match([TokenType.BSL, TokenType.BSR]):
+			oper = self.previous()
+			right = self.equality()
+			left = expr
+			expr = BinaryExpr(left, oper, right)
+			expr.setKobe(left.row_b, right.row_e, left.col_b, right.col_e, left.text + oper.text + right.text)
+			
+		return expr
+	
 	def addsub(self):
 		expr = self.muldiv()
 		
@@ -226,7 +283,7 @@ class Parser:
 		return expr
 		
 	def unary(self):
-		if self.match([TokenType.SUB, TokenType.NEG]):
+		if self.match([TokenType.SUB, TokenType.BOC]):
 			oper = self.previous()
 			right = self.unary()
 			ret = UnaryExpr(oper, right)
