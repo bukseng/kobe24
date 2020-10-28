@@ -18,7 +18,6 @@ code file's extension can be anything as long as it's readable on a typical code
 
 # Todo
 * for loop
-* bitwise opertators
 * handling user input
 * improve gui design and features
 * set data structure
