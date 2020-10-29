@@ -9,11 +9,13 @@ class Environment:
 	def loadFunction(self, name, value):
 		self.values[name] = value
 		
-	def assign(self, name, value):
+	def assign(self, name, value, inOuter=False):
 		if name.text in self.values:
 			self.values[name.text] = value
+		elif inOuter:
+			self.outer.assign(name,value, inOuter)
 		elif self.checkOuter(name.text) == True:
-			self.outer.assign(name, value)
+			self.outer.assign(name, value, True)
 		else:
 			self.values[name.text] = value
 			

@@ -82,7 +82,8 @@ class List(list):
 	def sortby(self, args):
 		if len(args) == 1:
 			try:
-				return sorted(self, key=lambda x:x[args[0]])
+				self.sort(key=lambda x:x[args[0]])
+				return self
 			except:
 				raise InvalidArgument()
 		else:
@@ -91,7 +92,8 @@ class List(list):
 	def rsortby(self, args):
 		if len(args) == 1:
 			try:
-				return sorted(self, key=lambda x:x[args[0]], reverse=1)
+				self.sort(key=lambda x:x[args[0]], reverse=1)
+				return self
 			except:
 				raise InvalidArgument()
 		else:
