@@ -20,7 +20,7 @@ code file's extension can be anything as long as it's readable on a typical code
 * for loop
 * handling user input
 * improve gui design and features
-* set data structure
+* set, queue, priority_queue, pair data structures
 * type casting
 * some refactoring
 * tests
