@@ -6,8 +6,7 @@ tkinter 8.6
 python 3.6.5
 
 # How to run
-run in terminal: k24.py [code file]  
-code file's extension can be anything as long as it's readable on a typical code editor.
+run in terminal: k24.py [text file]  
 
 # Description
 * procedural and interpreted language
