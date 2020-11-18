@@ -6,7 +6,8 @@ tkinter 8.6
 python 3.6.5
 
 # How to run
-run in terminal: k24.py [text file]  
+run in terminal: k24.py [code file]  
+code file - a text file that contains the code
 
 # Description
 * procedural and interpreted language
