@@ -25,6 +25,6 @@ code file - a text file that contains the code
 * some refactoring
 * tests
 # Sample
-https://www.youtube.com/watch?v=fPAmNF46ovs
-https://www.youtube.com/watch?v=RHdXrN0Zu1Y&t=14s
-https://www.youtube.com/watch?v=-b_Met5aYKM&t=39s
+* https://www.youtube.com/watch?v=fPAmNF46ovs
+* https://www.youtube.com/watch?v=RHdXrN0Zu1Y&t=14s
+* https://www.youtube.com/watch?v=-b_Met5aYKM&t=39s
